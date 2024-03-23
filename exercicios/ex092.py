@@ -1,7 +1,7 @@
 from datetime import datetime
 
 funcionario = dict()
-ano_atual = datetime.today().year
+ano_atual = datetime.now().year
 
 funcionario['nome'] = str(input('Nome: '))
 ano_nascimento = int(input('Ano de nascimento: '))
