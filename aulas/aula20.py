@@ -19,3 +19,8 @@ soma(b=6, a=1)
 
 contador(1, 2, 4, 9)
 contador(1, 2, 4, "9")
+
+# Empacotamento e Desempacotamento
+# podemos distribuir os valores de um array em variaveis e criar um empacotamento do restante
+nome1, * nomes = ['Maria', 'João', 'Carlos']
+nome2, idade = ('Ana', 12)
