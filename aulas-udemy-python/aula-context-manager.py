@@ -2,6 +2,29 @@ from contextlib import contextmanager
 from typing import TextIO
 import os
 
+
+# criando nosso proprio context manager para arquivo
+class MyOpen:
+    def __init__(self, caminho_arquivo, modo):
+        self.caminho_arquivo = caminho_arquivo
+        self.modo = modo
+        self.arquivo: TextIO = None
+
+    def __enter__(self):
+        print('Abrindo arquivo')
+        self.arquivo = open(self.caminho_arquivo, self.modo, encoding='utf8')
+        return self.arquivo
+
+    # Ao ocorrer uma exceção interna o bloco de with será enviada no parametro
+    # Ao fazer o metodo retonar True indica que a exceção foi tratada e não subira para outros contextos
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+        print('Fechando arquivo')
+        self.arquivo.close()
+        # poderia ser logada a exceção
+        print(exc_type, exc_val, exc_tb)
+        return True
+
+
 file_name = 'aula.text'
 
 # aciona o recurso com o acionamento do metodo exit() ao final da execução
@@ -40,6 +63,8 @@ def open_file(file_path_context: str) -> TextIO:
     file_context = open(file_path_context, 'r')
     try:
         yield file_context
+    except Exception as erro:
+        print('Aconteceu um erro', erro)
     finally:
         file_context.close()
 
@@ -54,3 +79,8 @@ with open_file(file_name) as file:
 os.rename(file_name, 'aula-exemplo.txt')
 # apaga o arquivo, também possivel com remove
 os.unlink(file_name)
+
+with MyOpen('aula.txt', 'w') as arquivo:
+    arquivo.write('Linha 1 \n')
+    arquivo.write('Linha 2 \n')
+    arquivo.write('Linha 3 \n')

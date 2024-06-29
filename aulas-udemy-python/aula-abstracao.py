@@ -7,6 +7,9 @@ LOG_FILE = Path(__file__).parent / 'log.txt'
 # para uma classe ser abstrata ela precisa herdade de ABC e possuir um metodo marcado como abstrato
 # Ao criar a instancia de uma classe abstrata apos isso sera lançado um erro
 class Log(ABC):
+    def __init__(self, log_level):
+        self._log_level = None
+        self.log_level = log_level
 
     # metodo protegido abstrato
     @abstractmethod
@@ -19,8 +22,29 @@ class Log(ABC):
     def log_success(self, mensagem):
         return self._log(f'Success: {mensagem}')
 
+    # propriedades marcadas como abstratas
+    @property
+    @abstractmethod
+    def log_level(self):
+        pass
+
+    @log_level.setter
+    @abstractmethod
+    def log_level(self, value):
+        ...
+
 
 class LogFileMixin(Log):
+    def __init__(self, log_level):
+        super().__init__(log_level)
+
+    @property
+    def log_level(self):
+        return self._log_level
+
+    @log_level.setter
+    def log_level(self, value):
+        self._log_level = value
 
     def _log(self, mensagem):
         with open(LOG_FILE, 'a', encoding='utf8') as file:
@@ -29,6 +53,16 @@ class LogFileMixin(Log):
 
 
 class LogPrintMixin(Log):
+    def __init__(self, log_level):
+        super().__init__(log_level)
+        
+    @property
+    def log_level(self):
+        return self._log_level
+
+    @log_level.setter
+    def log_level(self, value):
+        self._log_level = value
 
     def _log(self, mensagem):
         print(f'{mensagem} ({self.__class__.__name__})')
@@ -69,7 +103,8 @@ class SmartPhone(Eletronico, LogPrintMixin):
 
 
 if __name__ == '__main__':
-    logger = LogPrintMixin()
+    logger = LogPrintMixin('Information')
+    print(logger.log_level)
     logger.log_success('Sucesso')
 
     iphone = SmartPhone('iPhone')
